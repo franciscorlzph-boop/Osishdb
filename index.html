@@ -1,137 +1,285 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Mini Tigrinho - Protótipo</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #1a1a2e;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
-    }
-    .slot-machine {
-      background: #16213e;
-      border: 4px solid #f39c12;
-      border-radius: 12px;
-      padding: 20px;
-      text-align: center;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-    }
-    .reels {
-      display: flex;
-      gap: 15px;
-      margin: 20px 0;
-    }
-    .reel {
-      width: 70px;
-      height: 70px;
-      background: #0f3460;
-      border: 2px solid #e94560;
-      border-radius: 8px;
-      font-size: 2.2rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    button {
-      background: #e94560;
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      font-size: 1.1rem;
-      font-weight: bold;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    button:hover {
-      background: #ff5470;
-    }
-    button:disabled {
-      background: #555;
-      cursor: not-allowed;
-    }
-    .status {
-      margin-top: 15px;
-      font-size: 1.1rem;
-      min-height: 24px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mini Tigre - Edição Especial</title>
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 18px;
+  color: #fff6dc;
+  font-family: Arial, sans-serif;
+  background:
+    radial-gradient(ellipse at top, #382052 0%, #171329 55%, #0c0b17 100%);
+}
+
+.game {
+  width: 100%;
+  max-width: 390px;
+  padding: 23px 18px;
+  text-align: center;
+  border: 2px solid #e9b94f;
+  border-radius: 22px;
+  background: linear-gradient(160deg, #29203e, #171629);
+  box-shadow: 0 0 30px #d99b3230, inset 0 0 20px #ffffff08;
+}
+
+.logo {
+  font-size: 30px;
+  margin-bottom: 5px;
+}
+
+h1 {
+  margin: 5px 0 8px;
+  color: #ffd778;
+  font-size: 25px;
+}
+
+.subtitle {
+  color: #c9bedb;
+  font-size: 12px;
+  margin-bottom: 22px;
+}
+
+.balance {
+  background: #100f20;
+  border: 1px solid #625075;
+  border-radius: 12px;
+  padding: 13px;
+  margin-bottom: 20px;
+}
+
+.balance small {
+  display: block;
+  color: #bdb2d0;
+  margin-bottom: 5px;
+}
+
+#balance {
+  color: #ffe08a;
+  font-size: 26px;
+  font-weight: bold;
+}
+
+.coins { color: #d9c8a3; font-size: 12px; }
+
+.reels {
+  display: flex;
+  justify-content: center;
+  gap: 9px;
+  margin: 20px 0;
+}
+
+.reel {
+  width: 31%;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 13px;
+  border: 2px solid #d9a64e;
+  background: linear-gradient(180deg, #40335d, #201a35);
+  font-size: 42px;
+  box-shadow: inset 0 0 15px #0005;
+}
+
+.reel.spinning {
+  animation: shake .12s linear infinite alternate;
+  filter: brightness(1.5);
+}
+
+@keyframes shake {
+  from { transform: translateY(-3px); }
+  to { transform: translateY(3px); }
+}
+
+button {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(100deg, #ffb844, #ff6c8e);
+  color: #28142c;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 5px 15px #ff7c7440;
+}
+
+button:disabled {
+  opacity: .55;
+  cursor: wait;
+}
+
+#message {
+  min-height: 43px;
+  margin: 17px 0 10px;
+  font-weight: bold;
+  line-height: 1.5;
+}
+
+.win { color: #ffe17e; }
+.lose { color: #e5d8ee; }
+
+.rules {
+  margin-top: 15px;
+  padding: 13px;
+  background: #100f20;
+  border-radius: 12px;
+  text-align: left;
+  font-size: 12px;
+  line-height: 1.9;
+  color: #d5c9e5;
+}
+
+.rules h2 {
+  color: #ffd778;
+  font-size: 14px;
+  margin: 0 0 5px;
+}
+
+.footer {
+  margin-top: 16px;
+  color: #9689a8;
+  font-size: 10px;
+}
+</style>
 </head>
 <body>
 
-  <div class="slot-machine">
-    <h2>Mini Tigre 🐯</h2>
-    <p>Saldo Virtual: <b id="balance">100</b> moedas</p>
-    
-    <div class="reels">
-      <div class="reel" id="reel1">❓</div>
-      <div class="reel" id="reel2">❓</div>
-      <div class="reel" id="reel3">❓</div>
-    </div>
+<main class="game">
+  <div class="logo">🐯 ✨ 🐯</div>
+  <h1>MINI TIGRE</h1>
+  <div class="subtitle">EDIÇÃO ESPECIAL • JOGO DE MOEDAS VIRTUAIS</div>
 
-    <button id="spinBtn" onclick="girar()">GIRAR (Custa 10)</button>
-    <div class="status" id="message"></div>
+  <div class="balance">
+    <small>SEU SALDO</small>
+    <span id="balance">100</span>
+    <span class="coins"> moedas virtuais</span>
   </div>
 
-  <script>
-    // Símbolos e seus respectivos multiplicadores
-    const symbols = ["🍊", "🧧", "🪙", "🐯"];
-    let balance = 100;
-    const betCost = 10;
+  <div class="reels" aria-label="Resultado do giro">
+    <div class="reel" id="r1">🐯</div>
+    <div class="reel" id="r2">💎</div>
+    <div class="reel" id="r3">⭐</div>
+  </div>
 
-    function girar() {
-      if (balance < betCost) {
-        document.getElementById("message").innerText = "Saldo insuficiente!";
-        return;
-      }
+  <button id="spinBtn">GIRAR • 10 MOEDAS</button>
+  <div id="message" aria-live="polite">Boa sorte! Vamos jogar?</div>
 
-      // Cobrar aposta fictícia
-      balance -= betCost;
-      document.getElementById("balance").innerText = balance;
-      document.getElementById("message").innerText = "Girando...";
-      
-      const btn = document.getElementById("spinBtn");
-      btn.disabled = true;
+  <section class="rules">
+    <h2>🏆 TABELA DE PRÊMIOS</h2>
+    💎 💎 💎 — prêmio de 100 moedas<br>
+    7️⃣ 7️⃣ 7️⃣ — prêmio de 80 moedas<br>
+    🐯 🐯 🐯 — prêmio de 50 moedas<br>
+    ⭐ ⭐ ⭐ — prêmio de 40 moedas<br>
+    🪙 🪙 🪙 — prêmio de 25 moedas<br>
+    <span>Dois símbolos iguais: prêmio de 10 moedas.</span>
+  </section>
 
-      // Efeito simples de sorteio aleatório
-      let timer = 0;
-      let interval = setInterval(() => {
-        document.getElementById("reel1").innerText = symbols[Math.floor(Math.random() * symbols.length)];
-        document.getElementById("reel2").innerText = symbols[Math.floor(Math.random() * symbols.length)];
-        document.getElementById("reel3").innerText = symbols[Math.floor(Math.random() * symbols.length)];
-        timer += 100;
+  <div class="footer">
+    Entretenimento com moedas fictícias • Sem dinheiro real
+  </div>
+</main>
 
-        if (timer >= 1000) { // Para após 1 segundo
-          clearInterval(interval);
-          btn.disabled = false;
-          verificarResultado();
-        }
-      }, 100);
+<script>
+const symbols = ["🐯", "💎", "⭐", "🪙", "7️⃣"];
+const reels = [
+  document.getElementById("r1"),
+  document.getElementById("r2"),
+  document.getElementById("r3")
+];
+
+const balanceDisplay = document.getElementById("balance");
+const message = document.getElementById("message");
+const button = document.getElementById("spinBtn");
+
+let balance = 100;
+let spinning = false;
+
+function randomSymbol() {
+  return symbols[Math.floor(Math.random() * symbols.length)];
+}
+
+function updateBalance() {
+  balanceDisplay.textContent = balance;
+}
+
+function getPrize(result) {
+  if (result.every(s => s === result[0])) {
+    const prizes = {
+      "💎": 100,
+      "7️⃣": 80,
+      "🐯": 50,
+      "⭐": 40,
+      "🪙": 25
+    };
+    return prizes[result[0]] || 0;
+  }
+
+  for (const symbol of symbols) {
+    if (result.filter(s => s === symbol).length >= 2) {
+      return 10;
+    }
+  }
+
+  return 0;
+}
+
+function spin() {
+  if (spinning) return;
+
+  if (balance < 10) {
+    message.textContent = "Saldo insuficiente! Reinicie para jogar novamente.";
+    message.className = "lose";
+    return;
+  }
+
+  spinning = true;
+  button.disabled = true;
+  balance -= 10;
+  updateBalance();
+
+  message.textContent = "Girando...";
+  message.className = "";
+
+  reels.forEach(reel => reel.classList.add("spinning"));
+
+  const result = [randomSymbol(), randomSymbol(), randomSymbol()];
+
+  setTimeout(() => {
+    reels.forEach((reel, i) => {
+      reel.textContent = result[i];
+      reel.classList.remove("spinning");
+    });
+
+    const prize = getPrize(result);
+
+    if (prize > 0) {
+      balance += prize;
+      message.textContent = `🎉 Você ganhou ${prize} moedas!`;
+      message.className = "win";
+    } else {
+      message.textContent = "Não foi dessa vez. Tente novamente!";
+      message.className = "lose";
     }
 
-    function verificarResultado() {
-      const r1 = document.getElementById("reel1").innerText;
-      const r2 = document.getElementById("reel2").innerText;
-      const r3 = document.getElementById("reel3").innerText;
+    updateBalance();
+    spinning = false;
+    button.disabled = false;
+  }, 1200);
+}
 
-      if (r1 === r2 && r2 === r3) {
-        let premio = 50;
-        if (r1 === "🐯") premio = 150; // Tigre paga mais!
-        
-        balance += premio;
-        document.getElementById("balance").innerText = balance;
-        document.getElementById("message").innerText = `🎉 Parabéns! Ganhou ${premio} moedas!`;
-      } else {
-        document.getElementById("message").innerText = "Não foi dessa vez. Tente de novo!";
-      }
-    }
-  </script>
+button.addEventListener("click", spin);
+</script>
+
 </body>
-</html
+</html>
