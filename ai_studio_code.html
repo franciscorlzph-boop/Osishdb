@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Mini Tigrinho - Protótipo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #1a1a2e;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .slot-machine {
+      background: #16213e;
+      border: 4px solid #f39c12;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+    .reels {
+      display: flex;
+      gap: 15px;
+      margin: 20px 0;
+    }
+    .reel {
+      width: 70px;
+      height: 70px;
+      background: #0f3460;
+      border: 2px solid #e94560;
+      border-radius: 8px;
+      font-size: 2.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    button {
+      background: #e94560;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    button:hover {
+      background: #ff5470;
+    }
+    button:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
+    .status {
+      margin-top: 15px;
+      font-size: 1.1rem;
+      min-height: 24px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="slot-machine">
+    <h2>Mini Tigre 🐯</h2>
+    <p>Saldo Virtual: <b id="balance">100</b> moedas</p>
+    
+    <div class="reels">
+      <div class="reel" id="reel1">❓</div>
+      <div class="reel" id="reel2">❓</div>
+      <div class="reel" id="reel3">❓</div>
+    </div>
+
+    <button id="spinBtn" onclick="girar()">GIRAR (Custa 10)</button>
+    <div class="status" id="message"></div>
+  </div>
+
+  <script>
+    // Símbolos e seus respectivos multiplicadores
+    const symbols = ["🍊", "🧧", "🪙", "🐯"];
+    let balance = 100;
+    const betCost = 10;
+
+    function girar() {
+      if (balance < betCost) {
+        document.getElementById("message").innerText = "Saldo insuficiente!";
+        return;
+      }
+
+      // Cobrar aposta fictícia
+      balance -= betCost;
+      document.getElementById("balance").innerText = balance;
+      document.getElementById("message").innerText = "Girando...";
+      
+      const btn = document.getElementById("spinBtn");
+      btn.disabled = true;
+
+      // Efeito simples de sorteio aleatório
+      let timer = 0;
+      let interval = setInterval(() => {
+        document.getElementById("reel1").innerText = symbols[Math.floor(Math.random() * symbols.length)];
+        document.getElementById("reel2").innerText = symbols[Math.floor(Math.random() * symbols.length)];
+        document.getElementById("reel3").innerText = symbols[Math.floor(Math.random() * symbols.length)];
+        timer += 100;
+
+        if (timer >= 1000) { // Para após 1 segundo
+          clearInterval(interval);
+          btn.disabled = false;
+          verificarResultado();
+        }
+      }, 100);
+    }
+
+    function verificarResultado() {
+      const r1 = document.getElementById("reel1").innerText;
+      const r2 = document.getElementById("reel2").innerText;
+      const r3 = document.getElementById("reel3").innerText;
+
+      if (r1 === r2 && r2 === r3) {
+        let premio = 50;
+        if (r1 === "🐯") premio = 150; // Tigre paga mais!
+        
+        balance += premio;
+        document.getElementById("balance").innerText = balance;
+        document.getElementById("message").innerText = `🎉 Parabéns! Ganhou ${premio} moedas!`;
+      } else {
+        document.getElementById("message").innerText = "Não foi dessa vez. Tente de novo!";
+      }
+    }
+  </script>
+</body>
+</html>
